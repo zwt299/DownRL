@@ -1,0 +1,6 @@
+pyautogui
+pytorch
+tensorflow
+numpy
+pandas
+pygetwindow
