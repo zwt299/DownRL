@@ -12,6 +12,6 @@ def parse_image(image_path, crop_region, scale=10, tesseract_config=r'--oem 3 --
     cropped_image = cropped_image.resize((cropped_image.width * scale, cropped_image.height * scale),
                                          Image.LANCZOS)
     cropped_image = cropped_image.point(lambda p: p > 220 and 255)
-    cropped_image.save('test.png')
+    cropped_image.save('images/test.png')
     text = pytesseract.image_to_string(cropped_image, config=tesseract_config).strip()
     return text

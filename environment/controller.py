@@ -1,5 +1,5 @@
-import time
 import typing
+
 import pyautogui as gui
 
 
@@ -13,14 +13,14 @@ class Controller:
             'press_space',
             'hold_space',
             'release_space',
-            'none'
+            'no_action'
         ]
 
     """
     Execute input from algorithm based on user actions.
     """
-
-    def execute_action(self, action: str):
+    def execute_action(self, ind):
+        action = self.actions[ind]
         match action:
             case 'hold_right':
                 gui.keyUp('left')
@@ -43,6 +43,9 @@ class Controller:
 
     def get_actions(self):
         return self.actions
+
+    def get_index_of_action(self, action):
+        return self.actions.index(action)
 
     def quit(self):
         gui.keyUp('left')

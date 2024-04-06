@@ -8,5 +8,14 @@ class BaseAgent:
     def observe_state(self, state):
         raise NotImplementedError
 
-    def learn(self, *args):
+    def learn(self):
+        raise NotImplementedError
+
+    def store_experience(self, state, action, reward, new_state, done):
+        raise NotImplementedError
+
+    def reset(self):
+        raise NotImplementedError
+
+    def quit(self):
         raise NotImplementedError

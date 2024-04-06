@@ -1,19 +1,15 @@
 import subprocess
+from datetime import time
+from time import sleep
 
-import pyautogui
-import pyautogui as gui
-import typing
-
-import controller
-from agents.base_agent import BaseAgent
-from agents.randomized_agent import RandomizedAgent
-from controller import Controller
-import time
-
-from environment import Environment
-from trainer import Trainer
+from agents.dqn_agent import DQNAgent
+from environment.environment import Environment
+from performance.performance_logger import PerformanceLogger
+from trainer.trainer import Trainer
+import tensorflow as tf
 
 DOWNWELL = 'Downwell'
+
 
 def get_game_window_id() -> str:
     try:
@@ -28,10 +24,11 @@ def get_game_window_id() -> str:
 
 def main():
     game_window_id = get_game_window_id()
-
     environment = Environment(game_window_id)
-    agent = RandomizedAgent (environment.get_action_space())
-    trainer = Trainer(environment, agent)
+    # agent = RandomizedAgent(environment.get_action_space())
+
+    agent = DQNAgent(environment.get_action_space())
+    trainer = Trainer(environment, agent, PerformanceLogger())
 
     trainer.train()
 
