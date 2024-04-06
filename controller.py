@@ -20,7 +20,7 @@ class Controller:
     Execute input from algorithm based on user actions.
     """
 
-    def execute_action(self, action: str):
+    def  execute_action(self, action: str):
         match action:
             case 'hold_right':
                 gui.keyUp('left')
@@ -43,3 +43,8 @@ class Controller:
 
     def get_actions(self):
         return self.actions
+
+    def quit(self):
+        gui.keyUp('left')
+        gui.keyUp('right')
+        gui.keyUp('space')

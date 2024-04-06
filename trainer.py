@@ -18,14 +18,20 @@ class Trainer:
     """
 
     def train(self):
+        run = True
+        iteration = 0
         try:
             while True:
-                state = self.environment.get_state()
-                action = self.agent.get_action(state)
-                self.environment.take_action(action)
-                self.environment.update_state()
+                while run:
+                    state = self.environment.get_state()
+                    if state[2]:  # game over
+                        break
+                    action = self.agent.get_action(state)
+                    self.environment.take_action(action)
+                iteration += 1
+                run = True
 
-
-        except:
+        except KeyboardInterrupt:
             print('Training is stopped')
             print('Shutting down')
+            self.environment.quit()

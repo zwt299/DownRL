@@ -1,6 +1,10 @@
-pyautogui
+pyautogui~=0.9.54
 torch
 tensorflow
-numpy
+numpy~=1.24.3
 pandas
 pygetwindow
+pillow~=10.3.0
+opencv-python~=4.9.0.80
+pytesseract~=0.3.10
+mss~=9.0.1
