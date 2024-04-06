@@ -29,10 +29,10 @@ class Environment:
         sct = mss_class()
         monitor = sct.monitors[monitor_index]
         monitor_region = {
-            "top": monitor["top"]+38,
+            "top": monitor["top"] + 38,
             "left": monitor["left"],
             "width": 380,
-            "height": 284 ,
+            "height": 284,
         }
         screenshot = sct.grab(monitor_region)
         # Convert to an OpenCV image (BGR)
@@ -74,10 +74,6 @@ class Environment:
             self.game_over = True
 
         return self.recent_frame, self.gems, self.game_over
-
-
-
-
 
     def quit(self):
         print("Screenshots processed: " + str(self.counter))
