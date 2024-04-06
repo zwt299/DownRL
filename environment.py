@@ -1,5 +1,6 @@
 import queue
 import subprocess
+from time import sleep
 
 import cv2
 import numpy as np
@@ -13,17 +14,30 @@ import mss.tools
 
 class Environment:
     def __init__(self, window_id: str):
-        self.state = None
         self.window_id = window_id
         self.controller = Controller()
         self.focus_window()
+        self.screenshot()
         self.counter = 0
-        self.recent_frame = None
-        self.gems = None,
+
+        # State Representation includes the below
+        self.current_frame = None
+        self.previous_frame = None
+        self.current_gems = None,
+        self.previous_gems = None
+        self.delta_gems = None
         self.game_over = False
+
+    """
+    Utility function to put game window into focus.
+    """
 
     def focus_window(self):
         subprocess.run(["xdotool", "windowactivate", self.window_id])
+
+    """
+    Take screenshot of the game window. Grayscale the screenshot, used in determining game state.
+    """
 
     def screenshot(self, monitor_index=2, output_filename="capture.png"):
         sct = mss_class()
@@ -46,34 +60,41 @@ class Environment:
         sct.close()
         return grayscale_img
 
-    # def take_screenshot(self):
-    #     try:
-    #         subprocess.run(["import", "-window", self.window_id, "current_frame.png"])
-    #     except subprocess.CalledProcessError:
-    #         print("Error while taking screenshot.")
-
-    def get_action_space(self):
-        return self.controller.get_actions()
-
-    def take_action(self, action):
-        self.controller.execute_action(action)
-
     def process_screenshot(self, screenshot_path: str):
         gems = image_utilities.parse_image(screenshot_path, game_state_constants.GAME_OVER_LOCATION)
         game_over = image_utilities.parse_image(screenshot_path, game_state_constants.GEMS_LOCATION)
 
         return gems, game_over
 
-    def get_state(self):
-        frame = self.screenshot()
-        self.recent_frame = frame
-        gems_str, game_over_str = self.process_screenshot('capture.png')
-        gems_count = general_utilities.convert_string_to_int(gems_str)
-        self.gems = gems_count
-        if game_over_str.lower() == 'game over':
-            self.game_over = True
+    def get_action_space(self):
+        return self.controller.get_actions()
 
-        return self.recent_frame, self.gems, self.game_over
+    def take_action(self, action):
+        self.controller.execute_action(action)
+        sleep(0.05)  # Give a delay to understand the rewards and change in environment
+
+    def update_state(self):
+        self.previous_frame = self.current_frame
+        self.previous_gems = self.current_gems
+
+        self.current_frame = self.screenshot()
+        current_gems_str, game_over_str = self.process_screenshot('capture.png')
+        self.current_gems = general_utilities.convert_string_to_int(current_gems_str)
+        if game_over_str.lower() == "game over":
+            self.game_over = True
+        else:
+            self.game_over = False
+        self.delta_gems = self.current_gems - self.previous_gems
+
+    def get_state(self):
+        return {
+            "current_frame": self.current_frame,
+            "previous_frame": self.previous_frame,
+            "current_gems": self.current_gems,
+            "previous_gems": self.previous_gems,
+            "delta_gems": self.delta_gems,
+            "game_over": self.game_over,
+        }
 
     def quit(self):
         print("Screenshots processed: " + str(self.counter))
